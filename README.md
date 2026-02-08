@@ -1,2 +1,164 @@
 # docker-project-python-falsk-frontend---redis-cache
 docker-project-python-falsk-frontend---redis-cache
+
+# Docker Multi-Container Web Application
+
+A simple Flask application with Redis cache demonstrating Docker multi-container setup.
+
+## Files Included
+
+- `app.py` - Flask application with visit counter
+- `requirements.txt` - Python dependencies
+- `Dockerfile` - Container configuration for Flask app
+- `docker-compose.yml` - Multi-container orchestration
+
+## Features
+
+✅ Flask web application  
+✅ Redis for caching visit counts  
+✅ Container networking  
+✅ Persistent data storage with volumes  
+✅ Health checks for both services  
+✅ Environment variable configuration
+
+## How to Run
+
+### 1. Build and Start Containers
+
+```bash
+docker-compose up --build
+```
+
+Or run in detached mode:
+```bash
+docker-compose up -d --build
+```
+
+### 2. Access the Application
+
+Open your browser or use curl:
+```bash
+curl http://localhost:5000
+```
+
+You should see:
+```
+Hello! This page has been visited 1 times.
+```
+
+Each refresh increments the counter.
+
+### 3. Check Health Status
+
+```bash
+curl http://localhost:5000/health
+```
+
+### 4. View Logs
+
+```bash
+# All services
+docker-compose logs
+
+# Specific service
+docker-compose logs web
+docker-compose logs redis
+
+# Follow logs
+docker-compose logs -f
+```
+
+### 5. Stop Containers
+
+```bash
+docker-compose down
+```
+
+### 6. Stop and Remove Volumes (clears visit count)
+
+```bash
+docker-compose down -v
+```
+
+## Docker Commands Reference
+
+### View Running Containers
+```bash
+docker-compose ps
+```
+
+### Execute Commands in Container
+```bash
+docker-compose exec web bash
+docker-compose exec redis redis-cli
+```
+
+### Check Redis Data
+```bash
+docker-compose exec redis redis-cli
+> GET visits
+> KEYS *
+```
+
+### Rebuild After Changes
+```bash
+docker-compose up --build
+```
+
+### Scale Services (advanced)
+```bash
+docker-compose up --scale web=3
+```
+
+## Architecture
+
+```
+┌─────────────────┐
+│   Browser       │
+└────────┬────────┘
+         │ http://localhost:5000
+         ▼
+┌─────────────────┐
+│  Flask App      │
+│  (web service)  │
+│  Port: 5000     │
+└────────┬────────┘
+         │ redis://redis:6379
+         ▼
+┌─────────────────┐
+│  Redis Cache    │
+│  (redis service)│
+│  Port: 6379     │
+│  Volume: redis- │
+│  data           │
+└─────────────────┘
+```
+
+## Troubleshooting
+
+**Problem:** Cannot connect to Redis  
+**Solution:** Ensure both containers are on the same network and Redis is running
+
+**Problem:** Port already in use  
+**Solution:** Change port mapping in docker-compose.yml (e.g., "8080:5000")
+
+**Problem:** Visit count resets  
+**Solution:** The volume persists data. Only `docker-compose down -v` removes it.
+
+## Learning Points
+
+1. **Multi-container orchestration** with Docker Compose
+2. **Container networking** - services communicate by service name
+3. **Volume management** - data persistence across container restarts
+4. **Environment variables** - configuration management
+5. **Health checks** - monitoring container health
+6. **Dependencies** - `depends_on` ensures Redis starts before Flask
+
+## Next Steps
+
+Try these enhancements:
+- Add a PostgreSQL database
+- Implement Docker secrets for sensitive data
+- Add nginx as a reverse proxy
+- Use Docker networks for isolation
+- Add monitoring with Prometheus/Grafana
