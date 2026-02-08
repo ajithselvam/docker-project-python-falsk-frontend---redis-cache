@@ -1,0 +1,152 @@
+redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+
+
+
+
+🔴 redis: (Service)
+
+This creates a Redis container.
+
+image: redis:7-alpine
+
+Pulls Redis version 7
+
+alpine = lightweight Linux → smaller image, faster startup
+
+ports:
+- "6379:6379"
+
+
+Exposes Redis to the host machine
+
+Host port 6379 → container port 6379
+
+Useful if you want to connect using:
+
+redis-cli -h localhost -p 6379
+
+
+⚠️ In production, this is often not exposed for security reasons.
+
+volumes:
+- redis-data:/data
+
+
+Creates persistent storage
+
+Redis stores its data inside /data
+
+redis-data is a named Docker volume
+
+Data survives:
+
+container restart
+
+container deletion
+
+👉 Without this, all Redis data would be lost on restart.
+
+networks:
+- app-network
+
+
+Connects Redis to the same custom network as the web app
+
+Allows the web container to reach Redis using:
+
+redis:6379
+
+command:
+redis-server --appendonly yes
+
+
+Overrides the default Redis startup command
+
+Enables AOF (Append Only File) persistence
+
+Every write is logged → better durability than in-memory only
+
+👉 This works together with the /data volume.
+
+🩺 healthcheck:
+
+Docker checks whether Redis is alive.
+
+test:
+["CMD", "redis-cli", "ping"]
+
+
+Runs redis-cli ping inside the container
+
+If Redis responds with PONG, it’s healthy
+
+interval: 10s
+
+Run health check every 10 seconds
+
+timeout: 5s
+
+Fail if Redis doesn’t respond in 5 seconds
+
+retries: 5
+
+After 5 failures, Redis is marked unhealthy
+
+🌐 networks:
+networks:
+  app-network:
+    driver: bridge
+
+
+Creates a custom bridge network
+
+Containers on this network:
+
+Can talk to each other
+
+Are isolated from other Docker networks
+
+💾 volumes:
+volumes:
+  redis-data:
+
+
+Declares a named volume
+
+Docker manages it automatically
+
+Stored outside the container filesystem
+
+🔄 How everything connects together
+
+Web app → connects to redis:6379
+
+Redis data → stored in redis-data
+
+Both containers → same app-network
+
+Health checks ensure both services are actually running
+
+🧠 One-line summary
+
+👉 This config runs a persistent, health-checked Redis 7 server, connected securely to your app via a custom network, with data safely stored even after restarts.
