@@ -1,0 +1,66 @@
+Docker Exercise: Multi-Container Web Application
+Task: Create a simple web application with a Python Flask backend and Redis cache, running in separate containers.
+Requirements:
+
+Create a Flask application that:
+
+Has an endpoint that counts page visits
+Stores the visit count in Redis
+Returns "Hello! This page has been visited X times"
+
+
+Set up two containers:
+
+One for the Flask app
+One for Redis
+
+
+Create the necessary files:
+
+app.py - Your Flask application
+requirements.txt - Python dependencies
+Dockerfile - To containerize the Flask app
+docker-compose.yml - To orchestrate both containers
+
+
+Goals:
+
+Containers should communicate with each other
+The app should be accessible on http://localhost:5000
+Visit count should persist as long as containers are running
+
+
+
+Bonus Challenges:
+
+Add volume mapping so Redis data persists even after container restart
+Add environment variables for configuration
+Implement health checks
+
+Would you like me to:
+
+Guide you through this step-by-step?
+Provide hints for specific parts?
+Show you the solution after you attempt it?
+
+What's your preference?show the soln6:57 PMHere's the complete solution for the multi-container Docker application:Created 5 files, read a fileCreating the Flask application file that connects to Redis and counts visitsapp.pyCreating requirements.txt with Python dependenciesrequirements.txtCreating Dockerfile for the Flask applicationDockerfileCreating docker-compose.yml to orchestrate both containersdocker-compose.ymlCreating a README with instructions on how to run the applicationREADME.mdPresented 5 filesDonePerfect! I've created a complete Docker multi-container application for you. Here's what's included:
+📦 Solution Overview
+5 files that work together to create a Flask + Redis application:
+
+app.py - Flask web app that counts page visits using Redis
+requirements.txt - Python dependencies (Flask & Redis client)
+Dockerfile - Instructions to containerize the Flask app
+docker-compose.yml - Orchestrates both Flask and Redis containers
+README.md - Complete documentation and usage instructions
+
+🚀 Quick Start
+Just run these commands in the directory with these files:
+bashdocker-compose up --build
+Then visit http://localhost:5000 in your browser!
+🎯 Key Features Implemented
+
+✅ Two containers communicating over a Docker network
+✅ Persistent Redis data with volumes
+✅ Environment variables for configuration
+✅ Health checks for both services
+✅ Proper dependency management (Flask waits for Redis)
