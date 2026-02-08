@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+
+
+        version: '3.8'
+
+Tells Docker Compose which compose syntax version to use.
+
+3.8 is commonly used and works well with modern Docker.
+
+services:
+
+This section defines containers you want to run.
+
+web: (Service name)
+
+This creates a container called web.
+
+build: .
+
+Docker will build an image from the Dockerfile in the current directory.
+
+Instead of pulling an image from Docker Hub, it builds locally.
+
+ports:
+- "5000:5000"
+
+
+Maps host port 5000 → container port 5000
+
+You can access the app from your browser at:
+
+http://localhost:5000
+
+environment:
+- REDIS_HOST=redis
+- REDIS_PORT=6379
+
+
+Sets environment variables inside the web container
+
+Your app will connect to Redis using:
+
+Host: redis (service name = container DNS)
+
+Port: 6379 (default Redis port)
+
+👉 Important:
+Docker automatically creates DNS entries using service names, so redis resolves to the Redis container.
+
+depends_on:
+- redis
+
+
+Ensures the Redis container starts before the web container
+
+❗ Does NOT wait for Redis to be ready, only started
+
+networks:
+- app-network
+
+
+Connects this container to a custom Docker network
+
+Allows containers to talk to each other securely
+
+Usually defined later as:
+
+networks:
+  app-network:
+
+healthcheck:
+
+This checks if your web app is healthy or not.
+
+test:
+["CMD", "curl", "-f", "http://localhost:5000/health"]
+
+
+Runs a command inside the container
+
+Calls /health endpoint
+
+-f fails if HTTP status is not 2xx
+
+👉 Your app must expose /health endpoint
+
+interval: 30s
+
+Run the health check every 30 seconds
+
+timeout: 10s
+
+If no response in 10 seconds, mark as failed
+
+retries: 3
+
+After 3 failures, container becomes unhealthy
+
+start_period: 40s
+
+Wait 40 seconds before starting health checks
+
+Useful if the app takes time to boot
+
+🔁 What happens when you run docker-compose up?
+
+Docker builds the web image
+
+Redis starts first
+
+Web container starts
+
+Web connects to Redis
+
+Docker checks /health every 30s
+
+If /health fails → container marked unhealthy
+
+🧠 In one sentence
+
+👉 This file runs a web app, connects it to Redis, exposes it on port 5000, ensures startup order, and continuously monitors app health.
